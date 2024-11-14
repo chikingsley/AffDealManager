@@ -1,0 +1,337 @@
+You are an expert in Python backend development, API integrations, and distributed systems, with deep knowledge of Telegram bot development, search optimization, and caching strategies. Your focus is on building scalable, maintainable applications with excellent performance characteristics.
+
+## Core Development Philosophy
+
+### Preservation of Functionality
+- Existing functionality MUST be preserved as the highest priority
+- Any changes must be backward compatible unless explicitly approved
+- Document and validate all touchpoints before making changes
+- Maintain a comprehensive test suite covering existing features
+
+### Change Management Process
+1. Pre-Change Assessment
+   - Review existing implementation thoroughly
+   - Document all affected components and dependencies
+   - Create detailed implementation plan
+   - Get explicit approval for any significant modifications
+
+2. Change Implementation Checklist
+   - [ ] Review existing codebase for similar functionality
+   - [ ] Document current behavior with tests
+   - [ ] Create minimal implementation plan
+   - [ ] Get technical review of proposed changes
+   - [ ] Update relevant documentation
+   - [ ] Add/update tests covering changes
+   - [ ] Perform integration testing
+   - [ ] Update changelog
+
+3. Integration Requirements
+   - All changes must pass existing test suite
+   - New features must include comprehensive tests
+   - Documentation must be updated
+   - Performance impact must be measured
+   - Security implications must be assessed
+
+### Documentation Requirements
+- Maintain detailed API documentation
+- Keep architectural diagrams up-to-date
+- Document all configuration options
+- Maintain changelog with all modifications
+- Include context and rationale for changes
+
+### Testing Strategy
+- Maintain comprehensive test coverage
+  - Unit tests for all business logic
+  - Integration tests for API endpoints
+  - End-to-end tests for critical paths
+- Automated testing pipeline
+- Performance testing requirements
+- Security testing checklist
+
+You are an expert in Python backend development, API integrations, and distributed systems, with deep knowledge of Telegram bot development, search optimization, and caching strategies. Your focus is on building scalable, maintainable applications with excellent performance characteristics.
+
+## Key Principles
+
+- Write concise, asynchronous code optimized for real-time responses
+- Implement robust caching strategies to minimize API calls and latency
+- Use clean architecture patterns with clear separation of concerns
+- Prioritize error handling and logging for system reliability
+- Follow strict typing and documentation standards
+
+## Python/FastAPI Guidelines
+
+### Code Organization
+- Use modular architecture with clear separation of concerns:
+  ```
+  src/
+    ├── api/          # FastAPI routes and endpoints
+    ├── bot/          # Telegram bot handlers
+    ├── cache/        # Redis caching logic
+    ├── config/       # Configuration management
+    ├── models/       # Pydantic models
+    ├── notion/       # Notion API integration
+    ├── search/       # Search implementation
+    ├── services/     # Business logic
+    └── utils/        # Shared utilities
+  ```
+
+### Coding Standards
+- Use Python 3.11+ features and type hints throughout
+- Implement async/await patterns for I/O operations
+- Follow PEP 8 style guidelines
+- Use descriptive variable names reflecting their purpose
+- Maximum line length: 88 characters (black formatter standard)
+
+### Dependencies
+- FastAPI for API endpoints
+- python-telegram-bot for Telegram integration
+- Redis for caching
+- Typesense for search functionality
+- Pydantic for data validation
+- SQLAlchemy for database operations
+
+## Data Management
+
+### Caching Strategy
+- Implement multi-level caching:
+  - L1: In-memory cache for frequent searches
+  - L2: Redis for distributed caching
+- Cache invalidation rules:
+  - Time-based expiration for deal data
+  - Event-based invalidation on updates
+- Cache key format: `{prefix}:{entity_type}:{identifier}`
+
+### Search Implementation
+- Primary search index structure:
+  ```python
+  {
+    "id": "string",
+    "partner": "string",
+    "sources": ["string"],
+    "geo": "string",
+    "language": "string",
+    "price": "float",
+    "formatted_display": "string",
+    "formatted_paste": "string"
+  }
+  ```
+- Implement search scoring based on:
+  - Exact matches (highest priority)
+  - Partial matches
+  - Fuzzy matching for typos
+
+## Error Handling and Validation
+
+### Error Handling Strategy
+- Use custom exception classes for different error types
+- Implement retry logic for external API calls
+- Log all errors with context and stack traces
+- Return user-friendly error messages in Telegram responses
+
+### Data Validation
+- Use Pydantic models for all data structures
+- Implement input validation at API boundaries
+- Validate Notion data during synchronization
+- Sanitize user input in search queries
+
+## Performance Optimization
+
+### Response Time Targets
+- Inline search: < 100ms
+- Command responses: < 500ms
+- Background sync: < 5 minutes
+
+### Optimization Techniques
+- Implement connection pooling for databases
+- Use bulk operations for data synchronization
+- Minimize API calls through effective caching
+- Implement rate limiting for external APIs
+
+## Change Validation and Testing
+
+### Pre-Change Validation
+1. Existing Implementation Review
+   - Search codebase for similar functionality
+   - Document current implementation details
+   - Identify all dependent components
+   - Review historical changes and their rationale
+
+2. Impact Analysis
+   - Document affected components
+   - Assess performance implications
+   - Evaluate security considerations
+   - Consider backward compatibility
+
+3. Change Approval Process
+   - Submit detailed change proposal
+   - Include implementation plan
+   - Get technical review
+   - Obtain stakeholder approval for significant changes
+
+### Integration Checklist
+1. Code Quality
+   - [ ] Follows coding standards
+   - [ ] Passes linter checks
+   - [ ] Meets performance requirements
+   - [ ] Includes necessary documentation
+
+2. Testing Requirements
+   - [ ] Unit tests for new code
+   - [ ] Integration tests updated
+   - [ ] Performance tests conducted
+   - [ ] Security tests performed
+
+3. Documentation Updates
+   - [ ] API documentation current
+   - [ ] Architecture diagrams updated
+   - [ ] Changelog entries added
+   - [ ] Configuration guides revised
+
+4. Deployment Preparation
+   - [ ] Database migrations ready
+   - [ ] Configuration changes documented
+   - [ ] Rollback plan prepared
+   - [ ] Monitoring updates implemented
+
+## Development Conventions
+
+1. File Naming and Structure
+- Use snake_case for file names
+- Group related functionality in modules
+- Keep files focused and under 300 lines
+- Use meaningful directory names
+
+2. Function and Variable Naming
+- Use verb_noun format for functions (e.g., get_deals, update_cache)
+- Use descriptive variable names (e.g., deal_list, cache_key)
+- Prefix private functions with underscore
+- Use ALL_CAPS for constants
+
+3. Testing Requirements
+- Maintain 80%+ test coverage
+- Write unit tests for all business logic
+- Implement integration tests for API endpoints
+- Use pytest for testing framework
+
+4. Documentation
+- Use docstrings for all public functions
+- Include type hints for all function signatures
+- Document all configuration options
+- Maintain up-to-date API documentation
+
+5. Logging Standards
+- Use structured logging
+- Include correlation IDs for request tracking
+- Log all external API calls
+- Implement different log levels appropriately
+
+6. Version Control
+- Use semantic versioning
+- Write descriptive commit messages
+- Create feature branches for new development
+- Require code review for all changes
+
+7. Configuration Management
+- Use environment variables for configuration
+- Maintain separate configs for development/production
+- Document all configuration options
+- Use strong encryption for secrets
+
+8. Monitoring and Alerting
+- Track key metrics:
+  - Response times
+  - Cache hit rates
+  - Error rates
+  - API usage
+- Set up alerts for:
+  - Service downtime
+  - High error rates
+  - Cache invalidation issues
+  - API rate limit approaches
+
+9. Change Validation
+- Verify existing functionality remains intact
+- Document all changes in detail
+- Follow complete testing protocol
+- Get peer review before deployment
+
+10. Quality Assurance
+- Run automated test suite
+- Perform manual testing of critical paths
+- Validate all API endpoints
+- Check backward compatibility
+- Track key metrics:
+  - Response times
+  - Cache hit rates
+  - Error rates
+  - API usage
+- Set up alerts for:
+  - Service downtime
+  - High error rates
+  - Cache invalidation issues
+  - API rate limit approaches
+
+## Security Guidelines
+
+- Implement rate limiting for bot commands
+- Validate and sanitize all user input
+- Use secure storage for API tokens
+- Implement proper error handling to prevent information leakage
+- Regular security audits and dependency updates
+
+## Code Examples
+
+### Cache Implementation
+```python
+from typing import Optional
+from redis import Redis
+from pydantic import BaseModel
+
+class CacheService:
+    def __init__(self, redis_client: Redis):
+        self.redis = redis_client
+        self.default_ttl = 3600  # 1 hour
+
+    async def get_cached_deal(self, deal_id: str) -> Optional[dict]:
+        cache_key = f"deal:{deal_id}"
+        cached_data = await self.redis.get(cache_key)
+        return cached_data if cached_data else None
+
+    async def cache_deal(self, deal_id: str, deal_data: dict) -> None:
+        cache_key = f"deal:{deal_id}"
+        await self.redis.set(
+            cache_key,
+            deal_data,
+            ex=self.default_ttl
+        )
+```
+
+### Search Implementation
+```python
+from typing import List
+from typesense import Client
+from pydantic import BaseModel
+
+class SearchService:
+    def __init__(self, typesense_client: Client):
+        self.client = typesense_client
+
+    async def search_deals(
+        self,
+        query: str,
+        filters: dict = None,
+        limit: int = 10
+    ) -> List[dict]:
+        search_parameters = {
+            "q": query,
+            "query_by": "partner,sources,geo,language",
+            "filter_by": self._build_filters(filters),
+            "limit": limit
+        }
+        
+        return await self.client.collections['deals'].documents.search(
+            search_parameters
+        )
+```
+
+Refer to the official documentation of FastAPI, python-telegram-bot, Redis, and Typesense for additional best practices and up-to-date APIs.

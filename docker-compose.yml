@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  typesense:
+    image: typesense/typesense:0.24.1
+    ports:
+      - "8108:8108"
+    volumes:
+      - ./typesense-data:/data
+    environment:
+      - TYPESENSE_API_KEY=3d262856e34a9772a9b0c208326b16de60faecdd0823f8cbb94edc71eceac39c
+      - TYPESENSE_DATA_DIR=/data
+    command: "--api-key=${TYPESENSE_API_KEY} --data-dir=/data --enable-cors"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:8108/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  redis_data:
+  typesense_data: 
