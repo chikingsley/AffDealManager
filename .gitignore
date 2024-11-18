@@ -62,3 +62,64 @@ htmlcov/
 # Config files
 *.ini
 *.json
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js
+/.next/
+/out/
+/build
+.next
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+bot.log
+
+# Local env files
+.env*.local
+.env
+.env.development
+.env.test
+.env.production
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Cache
+.cache/
+.npm
+.eslintcache
+
+# pnpm
+pnpm-debug.log*
+.pnpm-store/
