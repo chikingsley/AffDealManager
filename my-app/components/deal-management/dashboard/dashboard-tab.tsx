@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { AlertCircle, DollarSign, Phone, Plus } from "lucide-react"
 import { EmailValidator } from "./email-validator"
+import { DealParser } from "./deal-parser"
 
 export function DashboardTab() {
   return (
@@ -10,10 +11,7 @@ export function DashboardTab() {
         <CardContent className="pt-6">
           <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button className="p-4 bg-primary/10 rounded-lg flex flex-col items-center gap-2 hover:bg-primary/20 transition-colors">
-              <Plus className="h-6 w-6" />
-              New Deal
-            </button>
+            <DealParser />
             <EmailValidator />
             <button className="p-4 bg-primary/10 rounded-lg flex flex-col items-center gap-2 hover:bg-primary/20 transition-colors">
               <Phone className="h-6 w-6" />
