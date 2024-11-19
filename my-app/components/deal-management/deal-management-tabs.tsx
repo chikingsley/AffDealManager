@@ -4,11 +4,12 @@ import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BarChart3, FileText, DollarSign, Briefcase, Plus } from 'lucide-react'
+import { BarChart3, FileText, DollarSign, Briefcase, Plus, Users } from 'lucide-react'
 import { DashboardTab } from "./dashboard/dashboard-tab"
 import { DealsTab } from "./deals/deals-tab"
 import { OffersTab } from "./offers/offers-tab"
 import { FinanceTab } from "./finance/finance-tab"
+import { LeadsTab } from "./leads/leads-tab"
 
 export function DealManagementTabs() {
   const router = useRouter()
@@ -26,7 +27,7 @@ export function DealManagementTabs() {
   // Initialize tab from URL on mount
   useEffect(() => {
     const tabFromUrl = searchParams.get("tab")
-    if (tabFromUrl && ["dashboard", "deals", "offers", "finance"].includes(tabFromUrl)) {
+    if (tabFromUrl && ["dashboard", "deals", "offers", "finance", "leads"].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl)
     }
   }, [searchParams])
@@ -40,7 +41,7 @@ export function DealManagementTabs() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-8">
+        <TabsList className="grid w-full grid-cols-5 mb-8">
           <TabsTrigger value="dashboard" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Dashboard
@@ -56,6 +57,10 @@ export function DealManagementTabs() {
           <TabsTrigger value="finance" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
             Finance
+          </TabsTrigger>
+          <TabsTrigger value="leads" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Leads
           </TabsTrigger>
         </TabsList>
 
@@ -73,6 +78,10 @@ export function DealManagementTabs() {
 
         <TabsContent value="finance">
           <FinanceTab />
+        </TabsContent>
+
+        <TabsContent value="leads">
+          <LeadsTab />
         </TabsContent>
       </Tabs>
     </div>
