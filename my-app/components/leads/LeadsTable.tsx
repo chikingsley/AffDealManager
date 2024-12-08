@@ -10,8 +10,18 @@ import { Badge } from "@/components/ui/badge"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown } from "lucide-react"
 import { Loader2 } from "lucide-react"
-import { supabase, type Lead } from "@/lib/supabase"
+import { supabase } from "@/utils/supabase/client"
 import { useEffect, useState } from "react"
+
+export interface Lead {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  phone: string
+  call_status: string
+  created_at: string
+}
 
 const callStatusColors = {
   NEW: 'bg-blue-50 text-blue-700',

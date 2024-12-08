@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type Request } from "next/server"
 import { Client } from "@notionhq/client"
 import { getFromCache, setInCache, generateCacheKey } from "@/lib/redis"
 
@@ -114,7 +114,10 @@ async function fetchOfferNames(pageIds: string[]) {
   return titles
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const resetCache = searchParams.get('resetCache') === 'true'
+
   if (!process.env.NOTION_TOKEN || !process.env.DEALS_DATABASE_ID || !process.env.BRANDS_DATABASE_ID || !process.env.OFFERS_DATABASE_ID) {
     console.error('Missing environment variables:', {
       hasToken: !!process.env.NOTION_TOKEN,
@@ -129,8 +132,9 @@ export async function GET() {
   }
 
   try {
-    // Try to get from cache first
     const cacheKey = generateCacheKey('deals')
+
+    // Try to get from cache first
     const cachedDeals = await getFromCache<any[]>(cacheKey)
     
     if (cachedDeals) {

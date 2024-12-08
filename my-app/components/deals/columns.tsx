@@ -242,7 +242,7 @@ export const columns: ColumnDef<Deal>[] = [
         <div className="flex items-center">
           {value.toLocaleString(undefined, {
             minimumFractionDigits: 0,
-            maximumFractionDigits: 2
+            maximumFractionDigits: 0
           })}
         </div>
       )
@@ -289,7 +289,7 @@ export const columns: ColumnDef<Deal>[] = [
   {
     accessorKey: "geo",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Geo" />
+      <DataTableColumnHeader column={column} title="GEO" />
     ),
     cell: ({ row }) => {
       const value = row.getValue("geo") as string[]

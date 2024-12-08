@@ -30,6 +30,9 @@ htmlcov/
 env/
 venv/
 ENV/
+.my-app/.env
+/inline-python/.env
+/my-app/.env
 
 # Vercel
 .vercel
@@ -94,3 +97,9 @@ notion_all/
 
 # Misc
 *.pem
+.cache/
+.turbo
+.eslintcache
+.stylelintcache
+inline-python/.env
+my-app/node_modules

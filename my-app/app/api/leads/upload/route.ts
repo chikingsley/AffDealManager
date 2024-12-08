@@ -1,6 +1,40 @@
-import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { NextResponse } from 'next/server';
+import { supabase } from '@/utils/supabase/client'
 import Papa from 'papaparse'
+
+// Define the expected structure of a lead
+interface Lead {
+  created_date: string
+  country: string
+  campaign: string
+  email: string
+  affiliate: string
+  box: string
+  call_status: string
+  so_media: string
+  deposit_date: string | null
+  first_name: string
+  last_name: string
+  phone: string
+  original_response: any
+}
+
+// Map CSV headers to database columns
+const headerMapping: { [key: string]: string } = {
+  'created date': 'created_date',
+  'country': 'country',
+  'campaign': 'campaign',
+  'email': 'email',
+  'affiliate': 'affiliate',
+  'box': 'box',
+  'call status': 'call_status',
+  'so (media)': 'so_media',
+  'deposit date': 'deposit_date',
+  'first name': 'first_name',
+  'last name': 'last_name',
+  'phone': 'phone',
+  'original response': 'original_response'
+}
 
 export async function POST(request: Request) {
   try {
@@ -16,14 +50,17 @@ export async function POST(request: Request) {
     }
 
     const csvText = await file.text()
-    const { data, errors } = Papa.parse(csvText, {
+    const { data, errors, meta } = Papa.parse(csvText, {
       header: true,
       skipEmptyLines: true,
       transformHeader: (header) => {
-        return header
+        // Convert header to lowercase and remove special characters
+        const normalizedHeader = header
           .toLowerCase()
-          .replace(/[^a-z0-9]/g, '_')
-          .replace(/^_+|_+$/g, '')
+          .trim()
+        
+        // Return the mapped column name or the normalized header if no mapping exists
+        return headerMapping[normalizedHeader] || normalizedHeader
       }
     })
 
@@ -40,7 +77,11 @@ export async function POST(request: Request) {
 
     // Validate required fields
     const requiredFields = ['email']
-    const missingFields = requiredFields.filter(field => !data[0].hasOwnProperty(field))
+    const missingFields = requiredFields.filter(field => 
+      !Object.keys(data[0]).some(header => 
+        header === field || headerMapping[header] === field
+      )
+    )
     
     if (missingFields.length > 0) {
       return NextResponse.json({ 
@@ -49,101 +90,63 @@ export async function POST(request: Request) {
     }
 
     // Process leads in batches for better performance
-    const batchSize = 50
-    const results = {
-      inserted: 0,
-      updated: 0,
-      errors: 0
-    }
+    const batchSize = 100
+    const totalLeads = data.length
+    let processedLeads = 0
+    let failedLeads = 0
 
-    for (let i = 0; i < data.length; i += batchSize) {
-      const batch = data.slice(i, i + batchSize)
-      const leads = batch.map((row: any) => ({
-        created_date: row.created_date || new Date().toISOString(),
-        country: row.country || '',
-        campaign: row.campaign || '',
-        email: row.email?.trim().toLowerCase(), // Normalize email
-        affiliate: row.affiliate || '',
-        box: row.box || '',
-        call_status: row.call_status || 'NEW',
-        so_media: row.so_media || '',
-        deposit_date: row.deposit_date || null,
-        first_name: row.first_name?.trim() || '',
-        last_name: row.last_name?.trim() || '',
-        phone: row.phone?.trim() || '',
-        original_response: row.original_response ? JSON.parse(row.original_response) : null
-      }))
-
-      // Filter out invalid emails
-      const validLeads = leads.filter(lead => 
-        lead.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)
-      )
-      results.errors += leads.length - validLeads.length
-
-      if (validLeads.length === 0) continue
-
-      // Insert all leads
-      const { error: insertError } = await supabase
-        .from('leads')
-        .insert(validLeads)
-
-      if (insertError) {
-        // If insert fails due to duplicates, handle each lead individually
-        if (insertError.code === '23505') { // Unique violation error code
-          for (const lead of validLeads) {
-            const { data: existing } = await supabase
-              .from('leads')
-              .select('id')
-              .eq('email', lead.email)
-              .eq('created_date', lead.created_date)
-              .single()
-
-            if (existing) {
-              // Update existing lead
-              const { error: updateError } = await supabase
-                .from('leads')
-                .update(lead)
-                .eq('id', existing.id)
-
-              if (updateError) {
-                console.error('Update error:', updateError)
-                results.errors++
-              } else {
-                results.updated++
-              }
-            } else {
-              // Try insert again
-              const { error: retryError } = await supabase
-                .from('leads')
-                .insert([lead])
-
-              if (retryError) {
-                console.error('Insert retry error:', retryError)
-                results.errors++
-              } else {
-                results.inserted++
-              }
+    for (let i = 0; i < totalLeads; i += batchSize) {
+      const batch = data.slice(i, i + batchSize).map((row: any) => {
+        const lead: Partial<Lead> = {}
+        
+        // Map each field using the headerMapping
+        Object.entries(row).forEach(([key, value]) => {
+          const mappedKey = headerMapping[key] || key
+          
+          // Handle special cases
+          if (mappedKey === 'created_date' || mappedKey === 'deposit_date') {
+            lead[mappedKey] = value ? new Date(value).toISOString() : null
+          } else if (mappedKey === 'original_response') {
+            try {
+              lead[mappedKey] = typeof value === 'string' ? JSON.parse(value) : value
+            } catch {
+              lead[mappedKey] = value
             }
+          } else {
+            lead[mappedKey] = value
           }
-        } else {
-          console.error('Batch insert error:', insertError)
-          results.errors += validLeads.length
-        }
+        })
+
+        return lead
+      })
+
+      const { error } = await supabase
+        .from('leads')
+        .upsert(batch, {
+          onConflict: 'email,created_date',
+          ignoreDuplicates: true
+        })
+
+      if (error) {
+        console.error('Error inserting batch:', error)
+        failedLeads += batch.length
       } else {
-        results.inserted += validLeads.length
+        processedLeads += batch.length
       }
     }
 
     return NextResponse.json({ 
-      success: true, 
-      results,
-      message: `Processed ${data.length} leads: ${results.inserted} inserted, ${results.updated} updated, ${results.errors} errors`
+      success: true,
+      processedLeads,
+      failedLeads,
+      totalLeads
     })
 
   } catch (error) {
-    console.error('Upload error:', error)
+    console.error('Error processing CSV:', error)
     return NextResponse.json({ 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+      error: 'Failed to process CSV file',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }

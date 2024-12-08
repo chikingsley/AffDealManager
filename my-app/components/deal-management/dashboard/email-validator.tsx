@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { createClient } from "@/utils/supabase/client"
+import { supabase } from "@/utils/supabase/client"
 import { AlertCircle, Loader2 } from "lucide-react"
 
 interface LeadInfo {
@@ -26,7 +26,6 @@ export function EmailValidator() {
   const [inputText, setInputText] = useState("")
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<LeadInfo[]>([])
-  const supabase = createClient()
 
   const extractEmails = (text: string) => {
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g
