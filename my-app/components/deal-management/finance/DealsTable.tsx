@@ -58,8 +58,8 @@ export function DealsTable({ deals, onSelectDeal, onSelectDeduction }: DealsTabl
               <TableCell>{deal.weekNumber}</TableCell>
               <TableCell className="text-right">{deal.totalLeads}</TableCell>
               <TableCell className="text-right text-red-500">{deal.invalid}</TableCell>
-              <TableCell className="text-right">${deal.finalBill.toLocaleString()}</TableCell>
-              <TableCell className="text-right">${deal.balance.toLocaleString()}</TableCell>
+              <TableCell className="text-right">${typeof deal.finalBill === 'number' ? deal.finalBill.toLocaleString() : '0'}</TableCell>
+              <TableCell className="text-right">${typeof deal.balance === 'number' ? deal.balance.toLocaleString() : '0'}</TableCell>
               <TableCell className="text-right">
                 <span className={cn(
                   "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
